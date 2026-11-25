@@ -1,0 +1,56 @@
+show_text:
+  fields:
+    display:
+      selector:
+        config_entry:
+          integration: smart_led
+    line:
+      required: true
+      selector:
+        select:
+          options:
+            - top
+            - bottom
+    left:
+      example: "C"
+      selector:
+        text:
+    separator:
+      example: ":"
+      selector:
+        text:
+    right:
+      example: "5"
+      selector:
+        text:
+    color:
+      default: white
+      example: green
+      selector:
+        text:
+    left_color:
+      example: white
+      selector:
+        text:
+    separator_color:
+      selector:
+        text:
+    right_color:
+      example: "#FF8000"
+      selector:
+        text:
+
+clear:
+  fields:
+    display:
+      selector:
+        config_entry:
+          integration: smart_led
+    line:
+      default: all
+      selector:
+        select:
+          options:
+            - top
+            - bottom
+            - all

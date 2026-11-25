@@ -1,0 +1,42 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Add a Smart LED display",
+        "description": "Pick the show_frame action of your ESPHome LED panel.",
+        "data": {
+          "frame_service": "Panel action"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "This panel is already set up.",
+      "no_panels": "No ESPHome panel with a show_frame action was found. Flash the smart-led firmware first."
+    }
+  },
+  "services": {
+    "show_text": {
+      "name": "Show text",
+      "description": "Draw one line: a left character, a separator and a right character.",
+      "fields": {
+        "display": {"name": "Display", "description": "Which Smart LED display. Optional when only one is set up."},
+        "line": {"name": "Line", "description": "Top or bottom half of the screen."},
+        "left": {"name": "Left", "description": "One character. Empty leaves it blank."},
+        "separator": {"name": "Separator", "description": "One character between left and right. A space leaves it blank."},
+        "right": {"name": "Right", "description": "One character. Empty leaves it blank."},
+        "color": {"name": "Color", "description": "Colour for all three slots: a name, hex like #FF8000, or [r, g, b]."},
+        "left_color": {"name": "Left color", "description": "Overrides the colour of the left character."},
+        "separator_color": {"name": "Separator color", "description": "Overrides the colour of the separator."},
+        "right_color": {"name": "Right color", "description": "Overrides the colour of the right character."}
+      }
+    },
+    "clear": {
+      "name": "Clear",
+      "description": "Blank one line or the whole screen.",
+      "fields": {
+        "display": {"name": "Display", "description": "Which Smart LED display. Optional when only one is set up."},
+        "line": {"name": "Line", "description": "Top, bottom or all."}
+      }
+    }
+  }
+}

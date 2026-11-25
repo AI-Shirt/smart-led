@@ -12,12 +12,34 @@ Home Assistant controls the panel. Each **channel** is a virtual screen, and eac
 
 ## Status
 
-Scaffold only. Channel definitions and the ESP32 LED section are still to be written.
+Working: ESPHome firmware with a virtual-display frame action, the Smart LED integration (v0.1.0) and a bus line 21 channel.
+
+## Smart LED integration
+
+Install `custom_components/smart_led` into Home Assistant, restart, then add **Smart LED** under Devices & services and pick your panel's `show_frame` action.
+
+Actions:
+
+- `smart_led.show_text`: draws one line (`top` or `bottom`) as three one-character slots, `left`, `separator` and `right`, with a `color` and optional per-slot colours (`left_color`, `separator_color`, `right_color`). Colours can be names, hex (`#FF8000`) or `[r, g, b]`.
+- `smart_led.clear`: blanks `top`, `bottom` or `all`.
+
+```yaml
+action: smart_led.show_text
+data:
+  line: top
+  left: "C"
+  separator: ":"
+  right: "5"
+  color: white
+  right_color: green
+```
 
 ## Layout
 
 - `SKILL.md`: the Claude skill that knows how to add, change and test channels.
-- `channels/`: one file per channel (name, effect, parameters).
+- `custom_components/smart_led/`: the Home Assistant integration.
+- `homeassistant/channels/`: one script per channel.
+- `tests/`: integration tests (`pytest`).
 - `esphome/smart-led.yaml`: ESPHome firmware config. Each channel is an effect in the light section.
 - `esphome/smart_led.h`: helpers that map display coordinates ((0,0) top-left) to strip LEDs.
 

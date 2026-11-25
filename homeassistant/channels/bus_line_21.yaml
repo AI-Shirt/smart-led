@@ -1,54 +1,36 @@
-# smart-led channel: bus line 21 countdown
+# smart-led channel: bus line 21 countdown (needs the Smart LED integration)
 #
-# Top half:    minutes to the next bus to Centraal (blue marker on the left)
-# Bottom half: minutes to the next bus to Lohmanstraat (purple marker on the left)
-# Digit colour: red <= 2 min, orange <= 5 min, green otherwise. "--" when no bus is known.
+# Top line:    C : minutes to the next bus to Centraal
+# Bottom line: L : minutes to the next bus to Lohmanstraat
+# Minutes: red <= 2, orange <= 5, green otherwise. "+" above 9 minutes, "-" when no bus is known.
 #
-# Paste the script into Settings > Automations & Scenes > Scripts > Add > Edit in YAML,
-# and the automation into Automations > Add > Edit in YAML.
+# Script: Settings > Automations & Scenes > Scripts > Add > Edit in YAML.
+# Keep the script's entity id script.smart_led_bus_line_21 so the automation below finds it.
 
 # ---------- script ----------
 alias: "smart-led: bus line 21"
-description: Draw the bus line 21 countdown on the smart-led virtual display.
+description: Draw the bus line 21 countdown on the Smart LED display.
 mode: restart
 sequence:
-  - action: esphome.led_display_show_frame
-    data:
-      pixels: >-
-        {%- set font = {
-          '0':['111','101','101','101','111'], '1':['010','110','010','010','111'],
-          '2':['111','001','111','100','111'], '3':['111','001','111','001','111'],
-          '4':['101','101','111','001','001'], '5':['111','100','111','001','111'],
-          '6':['111','100','111','101','111'], '7':['111','001','010','010','010'],
-          '8':['111','101','111','101','111'], '9':['111','101','111','001','111'],
-          '-':['000','000','111','000','000'], ' ':['000','000','000','000','000']} -%}
-        {%- set vals = [states('sensor.bus_line_21_next_to_centraal'),
-                        states('sensor.bus_line_21_to_lohmanstraat')] -%}
-        {%- set ns = namespace(px=[]) -%}
-        {%- for y in range(10) -%}
-          {%- set half = 0 if y < 5 else 1 -%}
-          {%- set r = y % 5 -%}
-          {%- set v = vals[half] -%}
-          {%- if v | int(-1) >= 0 -%}
-            {%- set m = [v | int, 99] | min -%}
-            {%- set txt = '%2d' | format(m) -%}
-            {%- set col = 'FF0000' if m <= 2 else ('FF8000' if m <= 5 else '00FF00') -%}
-          {%- else -%}
-            {%- set txt = '--' -%}
-            {%- set col = '404040' -%}
-          {%- endif -%}
-          {%- set mark = '0040FF' if half == 0 else 'A000FF' -%}
-          {%- for x in range(12) -%}
-            {%- if x == 0 -%}{%- set p = mark -%}
-            {%- elif 4 <= x <= 6 and font[txt[0]][r][x - 4] == '1' -%}{%- set p = col -%}
-            {%- elif 8 <= x <= 10 and font[txt[1]][r][x - 8] == '1' -%}{%- set p = col -%}
-            {%- else -%}{%- set p = '000000' -%}{%- endif -%}
-            {%- set ns.px = ns.px + [p] -%}
-          {%- endfor -%}
-        {%- endfor -%}
-        {{ ns.px | join }}
+  - variables:
+      lines:
+        top: { letter: "C", minutes: "{{ states('sensor.bus_line_21_next_to_centraal') }}" }
+        bottom: { letter: "L", minutes: "{{ states('sensor.bus_line_21_to_lohmanstraat') }}" }
+  - repeat:
+      for_each: [top, bottom]
+      sequence:
+        - variables:
+            m: "{{ lines[repeat.item].minutes | int(-1) }}"
+        - action: smart_led.show_text
+          data:
+            line: "{{ repeat.item }}"
+            left: "{{ lines[repeat.item].letter }}"
+            separator: ":"
+            right: "{{ '-' if m < 0 else ('+' if m > 9 else m | string) }}"
+            color: white
+            right_color: "{{ 'grey' if m < 0 else ('red' if m <= 2 else ('orange' if m <= 5 else 'green')) }}"
 
-# ---------- automation ----------
+# ---------- automation (unchanged from before) ----------
 # alias: "smart-led: refresh bus line 21"
 # mode: restart
 # triggers:

@@ -1,0 +1,13 @@
+{
+  "domain": "smart_led",
+  "name": "Smart LED",
+  "after_dependencies": ["esphome"],
+  "codeowners": [],
+  "config_flow": true,
+  "documentation": "https://github.com/AI-Shirt/smart-led",
+  "integration_type": "device",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/AI-Shirt/smart-led/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}
