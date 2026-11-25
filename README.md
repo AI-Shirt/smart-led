@@ -18,7 +18,8 @@ Scaffold only. Channel definitions and the ESP32 LED section are still to be wri
 
 - `SKILL.md`: the Claude skill that knows how to add, change and test channels.
 - `channels/`: one file per channel (name, effect, parameters).
-- `esphome/`: ESP32 LED section snippets for the effects.
+- `esphome/smart-led.yaml`: ESPHome firmware config. Each channel is an effect in the light section.
+- `esphome/smart_led.h`: helpers that map display coordinates ((0,0) top-left) to strip LEDs.
 
 ## Decisions
 
