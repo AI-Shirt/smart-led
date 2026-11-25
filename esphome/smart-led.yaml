@@ -37,6 +37,13 @@ logger:
 api:
   encryption:
     key: !secret smart_led_api_key
+  # Home Assistant sends the virtual display's frame here.
+  actions:
+    - action: show_frame
+      variables:
+        pixels: string
+      then:
+        - lambda: 'smart_led::load_frame(pixels);'
 
 ota:
   - platform: esphome
@@ -60,6 +67,17 @@ light:
     default_transition_length: 0s
     restore_mode: ALWAYS_OFF
     effects:
+      # Shows the latest frame from Home Assistant. This is the effect channels use.
+      - addressable_lambda:
+          name: Display
+          update_interval: 50ms
+          lambda: |-
+            const int W = ${width}, H = ${height};
+            const bool S = ${serpentine};
+            for (int y = 0; y < H; y++)
+              for (int x = 0; x < W; x++)
+                smart_led::set(it, x, y, W, H, S, smart_led::frame[y * W + x]);
+
       - addressable_lambda:
           name: Test Pattern
           update_interval: 500ms
